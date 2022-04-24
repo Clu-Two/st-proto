@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <stdio.h>
-#include <vector>
-#include <sstream>
-#include <set>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -58,7 +54,15 @@ public:
 	const char* destinationBuffer = { "N/A" };
 	std::vector<std::pair<int, int>> adjacents[links];
 
-} phobos, io, titan;
+
+	stationStats(const char* n, int i, int fpr, int b)
+	{
+		name = n;
+		station_id = i;
+		fuelPrice = fpr;
+		bays = b;
+	}
+};
 
 
 //struct Station 
@@ -143,6 +147,16 @@ public:
 		return active.target_distance;
 	}
 
+	shipStats(const char* n, const char* c, int i, int h, int f, int ca, int ct)
+	{
+		name = n;
+		shipClass = c;
+		index = i;
+		health = h;
+		fuel = f;
+		cargo = ca;
+		cargo = ct;
+	}
 	//const char* status[2] = { stateDocked, stateInFlight };
 }/**agamemnon, *agrippa*/;
 
@@ -176,7 +190,17 @@ struct market
 		int quantity = 0;
 		int row_total = 0;
 		int load_total = 0;
-}market[5];
+
+		market(const char* n, const char* i, int w, int p, int q)
+		{
+			name = n;
+			id = i;
+			weight = w;
+			price = p;
+			quantity = q;
+		}
+
+};
 
 
 // Weighted Directed Graph

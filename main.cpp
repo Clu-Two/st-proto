@@ -15,13 +15,9 @@
 #define IM_ARRAYSIZE(_ARR)          ((int)(sizeof(_ARR) / sizeof(*(_ARR))))     // Size of a static C-style array. Don't use on pointers!
 #define IMGUI_CDECL __cdecl
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
-
+#include <stdio.h>
+#include <iostream>
+#include <set>
 #include <cstdio>
 #include <cmath>   
 #include <iostream>
@@ -29,7 +25,8 @@
 #include <string>
 #include <vector>
 #include <list>
-#include "../header/main.h"
+
+#include "main.h"
 
 void MenuBar_File()
 {
@@ -94,16 +91,6 @@ int main(int argc, char** argv)
     //ships_db ships_db_obj;
     //ships_list ships_list_obj;
 
-
-    //ship1.ship_preview.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\b51.png");
-    //ship2.ship_preview.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\b52.png");
-    //ship3.ship_preview.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\b53.png");
-    //ship4.ship_preview.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\b54.png");
-    //ship1.grid_marker.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\ship_grid_marker9x9.jpg");
-    //ship2.grid_marker.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\ship_grid_marker9x9.jpg");
-    //ship3.grid_marker.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\ship_grid_marker9x9.jpg");
-    //ship4.grid_marker.loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_foundation_concept\\assets\\images\\ship_grid_marker9x9.jpg");
-
     //shipStats* agamemnon = new shipStats(), * agrippa = new shipStats();
     //shipStats agamemnon, agrippa;
 
@@ -121,57 +108,31 @@ int main(int argc, char** argv)
     // print adjacency list representation of a graph
     //printGraph(graph, n);
 
-    shipStats agamemnon, agrippa;
-    Assets assets;
-    // SET SHIP VARIABLES
+//SET OBJECTS
 
-    //grid.displayMap();
-agamemnon.name = {"North-Star"};
-agamemnon.shipClass = "Agamemnon";
-agamemnon.index = 1;
-agamemnon.health = 100;
-agamemnon.fuel = 400;
-agamemnon.cargo = 0;
-agamemnon.cargoStage = 0;
+Assets assets;
+//SET SHIP VARIABLES
+shipStats agamemnon("North - Star", "Agamemnon", 1, 100, 400, 0, 0);
 assets.pshipDisplay[0].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\agamemnon.png");
-//
-agrippa.name = "West Marina";
-agrippa.shipClass = "Agrippa";
-agrippa.index = 2;
-agrippa.health = 80;
-agrippa.fuel = 200;
-agrippa.cargo = 0;
-agrippa.cargoStage = 0;
+shipStats agrippa("West Marina", "Agrippa", 2, 80, 200, 0, 0);
 assets.pshipDisplay[1].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\agrippa.png");
 std::vector<shipStats> active = { agamemnon, agrippa };
 
 // SET STATION VARIABLES
-phobos.name = "Phobos";
-phobos.station_id = 1;
-phobos.fuelPrice = 2;
-phobos.bays = 1;
+stationStats io("Io", 0, 2, 2);
+stationStats phobos("Phobos", 1, 2, 1);
+stationStats titan("Titan", 2, 4, 4);
+
 assets.pstationDisplay[0].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\moon_phobos.png");
-//
-io.name = "Io";
-io.station_id = 0;
-io.fuelPrice = 2;
-io.bays = 2;
 assets.pstationDisplay[1].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\moon_io.png");
-//
-titan.name = "Titan";
-titan.station_id = 2;
-titan.fuelPrice = 4;
-titan.bays = 4;
 assets.pstationDisplay[2].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\moon_titan.png");
 //titan.photo->loadFromFile("assets\\images\\moon_titan.png");
 
 
-//phobos.adjacents = { io.station_id };
+// Graph
 phobos.adjacents[0].push_back(std::make_pair(io.station_id, 10));
-//io.adjacents = { phobos.station_id, titan.station_id };
 io.adjacents[0].push_back(std::make_pair(phobos.station_id, 30));
 io.adjacents[1].push_back(std::make_pair(titan.station_id, 100));
-//titan.adjacents = { io.station_id };
 titan.adjacents[0].push_back(std::make_pair(io.station_id, 50));
 
 
@@ -193,35 +154,48 @@ std::vector<int> stationID = { phobos.station_id, io.station_id, titan.station_i
 
 
 // MARKET DATA
-market[0].name = "STEEL";
-market[0].id = "##Steel";
-market[0].weight = 100;
-market[0].price = 150;
-market[0].quantity = 700;
+market steel("STEEL", "##Steel", 100, 150, 700);
+market radon("RADON", "##Steel", 1, 10, 1000);
+market graphene("GRAPHENE", "##Steel", 10, 300, 200);
+market fcells("F-CELLS", "##Steel", 1000, 800, 10);
+market kryptonite("KRYPTONITE", "##Steel", 70, 90, 160);
+
+market* marketO[5];
+marketO[0] = &steel;
+marketO[1] = &radon;
+marketO[2] = &graphene;
+marketO[3] = &fcells;
+marketO[4] = &kryptonite;
+
+//market[0].name = "STEEL";
+//market[0].id = "##Steel";
+//market[0].weight = 100;
+//market[0].price = 150;
+//market[0].quantity = 700;
 //
-market[1].name = "RADON";
-market[1].id = "##Radon";
-market[1].weight = 1;
-market[1].price = 10;
-market[1].quantity = 1000;
-//
-market[2].name = "GRAPHENE";
-market[2].id = "##Graphene";
-market[2].weight = 10;
-market[2].price = 300;
-market[2].quantity = 200;
-//
-market[3].name = "F-CELLS";
-market[3].id = "##Fcells";
-market[3].weight = 1000;
-market[3].price = 800;
-market[3].quantity = 10;
-//
-market[4].name = "KRYPTONITE";
-market[4].id = "##Kryptonite";
-market[4].weight = 70;
-market[4].price = 90;
-market[4].quantity = 160;
+//market[1].name = "RADON";
+//market[1].id = "##Radon";
+//market[1].weight = 1;
+//market[1].price = 10;
+//market[1].quantity = 1000;
+////
+//market[2].name = "GRAPHENE";
+//market[2].id = "##Graphene";
+//market[2].weight = 10;
+//market[2].price = 300;
+//market[2].quantity = 200;
+////
+//market[3].name = "F-CELLS";
+//market[3].id = "##Fcells";
+//market[3].weight = 1000;
+//market[3].price = 800;
+//market[3].quantity = 10;
+////
+//market[4].name = "KRYPTONITE";
+//market[4].id = "##Kryptonite";
+//market[4].weight = 70;
+//market[4].price = 90;
+//market[4].quantity = 160;
 
 
 while (window.isOpen())
@@ -324,46 +298,46 @@ while (window.isOpen())
             {
                 if (!ImGui::TableSetColumnIndex(column) && column > 0)
                     continue;
-                ImGui::PushID(market[row].id);
+                ImGui::PushID(marketO[row]->id);
                 switch (column)
                 {
                 case 0:
-                    ImGui::Text("%s", market[row].name);
+                    ImGui::Text("%s", marketO[row]->name);
                     break;
                 case 1:
-                    ImGui::Text("%d", market[row].weight);
+                    ImGui::Text("%d", marketO[row]->weight);
                     break;
                 case 2:
-                    ImGui::Text("%d", market[row].price);
+                    ImGui::Text("%d", marketO[row]->price);
                     break;
                 case 3:
-                    ImGui::Text("%d", market[row].quantity);
+                    ImGui::Text("%d", marketO[row]->quantity);
                     break;
                 case 4:
 
                     if (ImGui::Button("+10"))
                     {
                         indexO.increment = 10;
-                        market[row].row_total = indexO.marketRowStaging(market[row].row_total, indexO.increment);
-                        //market[row].load_total = market[row].row_total;
+                        marketO[row]->row_total = indexO.marketRowStaging(marketO[row]->row_total, indexO.increment);
+                        //marketO[row]->load_total = marketO[row]->row_total;
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("+25"))
                     {
                         indexO.increment = 25;
-                        market[row].row_total = indexO.marketRowStaging(market[row].row_total, indexO.increment);
+                        marketO[row]->row_total = indexO.marketRowStaging(marketO[row]->row_total, indexO.increment);
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("+50"))
                     {
                         indexO.increment = 50;
-                        market[row].row_total = indexO.marketRowStaging(market[row].row_total, indexO.increment);
-                        printf("%d", market[row].row_total);
+                        marketO[row]->row_total = indexO.marketRowStaging(marketO[row]->row_total, indexO.increment);
+                        printf("%d", marketO[row]->row_total);
                     }
                     indexO.increment = 0;
 
                     ImGui::SameLine();
-                    ImGui::Text("%d", market[row].row_total);
+                    ImGui::Text("%d", marketO[row]->row_total);
                 }
                 ImGui::PopID();
             }
@@ -379,9 +353,9 @@ while (window.isOpen())
                 // Reset Loader
                 for (int i = 0; i < 5; i++)
                 {
-                    active.at(indexO.selectedShip).cargo +=  market[i].row_total;
-                    market[i].row_total = 0;
-                    market[i].load_total = 0;
+                    active.at(indexO.selectedShip).cargo +=  marketO[i]->row_total;
+                    marketO[i]->row_total = 0;
+                    marketO[i]->load_total = 0;
                 }
                 active.at(indexO.selectedShip).cargoStage = 0;
             }
