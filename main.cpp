@@ -110,16 +110,21 @@ int main(int argc, char** argv)
 
 //SET OBJECTS
 
-Assets assets;
-//SET SHIP VARIABLES
+    Assets assets;
+    //SET SHIP VARIABLES
+//shipStats* agamemnon = new shipStats{ "North - Star", "Agamemnon", 1, 100, 400, 0, 0 };
 shipStats agamemnon("North - Star", "Agamemnon", 1, 100, 400, 0, 0);
 assets.pshipDisplay[0].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\agamemnon.png");
+//shipStats* agrippa = new shipStats{"West Marina", "Agrippa", 2, 80, 200, 0, 0};
 shipStats agrippa("West Marina", "Agrippa", 2, 80, 200, 0, 0);
 assets.pshipDisplay[1].loadFromFile("D:\\Clu 2\\Desktop\\Work\\Programming Projects\\St\\St_space_gate\\x64\\Debug\\assets\\images\\agrippa.png");
-std::vector<shipStats> active = { agamemnon, agrippa };
+std::vector<shipStats> active;
+active.push_back(agamemnon);
+active.push_back(agrippa);
+
 
 // SET STATION VARIABLES
-stationStats io("Io", 0, 2, 2);
+stationStats io( "Io", 0, 2, 2);
 stationStats phobos("Phobos", 1, 2, 1);
 stationStats titan("Titan", 2, 4, 4);
 
@@ -367,12 +372,13 @@ while (window.isOpen())
     ImGui::SetNextWindowPos(ImVec2(0, 540), NULL);
     ImGui::SetNextWindowSize(ImVec2(1920, 540), NULL);
     ImGui::Begin("ACTIVE FLEET", NULL, fixed);// begin window
-    if (ImGui::BeginTable("Ship Table", 7, ImGuiTableFlags_Borders))
+    if (ImGui::BeginTable("Ship Table", 8, ImGuiTableFlags_Borders))
     {
         ImGui::TableSetupColumn("NAME", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableSetupColumn("CARGO");
         ImGui::TableSetupColumn("HEALTH", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableSetupColumn("FUEL");
+        ImGui::TableSetupColumn("DISTANCE");
         ImGui::TableSetupColumn("SPEED", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableSetupColumn("STATUS");
         ImGui::TableSetupColumn("CLASS", ImGuiTableColumnFlags_WidthStretch);
@@ -403,12 +409,16 @@ while (window.isOpen())
                     ImGui::Text("%d", active.at(row).fuel);
                     break;
                 case 4:
-                    ImGui::Text("%d", active.at(row).speed);
+                    ImGui::Text("%d", active.at(row).target_distance);
+                    active.at(row).distance_cal(travel_delta);
                     break;
                 case 5:
-                    ImGui::Text("%s", active.at(row).status[0]); // Status not set
+                    ImGui::Text("%d", active.at(row).speed);
                     break;
                 case 6:
+                    ImGui::Text("%s", active.at(row).status[0]); // Status not set
+                    break;
+                case 7:
                     ImGui::Text("%s", active.at(row).shipClass);
                     break;
                 }
@@ -418,6 +428,7 @@ while (window.isOpen())
             ImGui::EndTable();
     }
     ImGui::End();
+
        //sf::Time micro = sf::microseconds(10000);
        //sf::Time milli = sf::milliseconds(10);
        //sf::Time seconds = sf::seconds(1.0f);
@@ -432,7 +443,9 @@ while (window.isOpen())
     if (travel_delta.getElapsedTime().asSeconds() >= 0.1f)
     {
         // ship.update(current);
-        active.at(indexO.selectedShip).update(active.at(indexO.selectedShip));
+        //active.at(indexO.selectedShip).update(active.at(indexO.selectedShip));
+        //STATIONS.at(indexO.selectedStation).adjacents->at(0).second;
+        //active.at(indexO.selectedShip).update();
         travel_delta.restart();
     }
     deltaClock.restart();
@@ -442,8 +455,25 @@ while (window.isOpen())
     ImGui::SFML::Render(window); // Call this to render the gui you defined in your update
     window.display();
 }
-        ImGui::SFML::Shutdown(); // Call when you want to shutdown imgui
+active.at(indexO.selectedShip).~shipStats();
+ImGui::SFML::Shutdown(); // Call when you want to shutdown imgui
+
         return 0;
 }
 
+void shipStats::distance_cal(sf::Clock travel_delta)
+{
+    if (travel_delta.getElapsedTime().asSeconds() >= 0.1f)
+    {
+        if (target_distance > 0 && !docked)
+        {
+            target_distance -= 0.5f;
+            std::cout << target_distance << std::endl;
+        }
+    }
+    travel_delta.restart();
+}
 
+shipStats::~shipStats()
+{
+}

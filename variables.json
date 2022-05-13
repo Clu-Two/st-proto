@@ -1,0 +1,22 @@
+{
+  "Ship_Classes": [
+    {
+      "“class”": "“Agrippa”",
+      "“ID”": "“AG”",
+      "“cargo_capacity”": "“100”",
+      "“speed": "“10”",
+      "“bay_size”": 1,
+      "“fuel”": 100,
+      "“texture”": "“C2_T1_V1.png”"
+    },
+    {
+      "“class”": "“Acheron”",
+      "“ID”": "“AC”",
+      "“cargo_capacity”": "“200”",
+      "“speed": "“10”",
+      "“bay_size”": 2,
+      "“fuel”": 400,
+      "“texture”": "“C5_T1_V1.png”"
+    }
+  ]
+}

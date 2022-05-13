@@ -1,11 +1,15 @@
-Star Trader v0.1.1
+Star Trader v0.1.2
 ============================
 A space ship ui based trading management sim.
 
 ------
 Notes:
 ------
-*objects need to be pointers so ships travel when not focused
+* Market needs to be fixed
+
+v0.1.2 changes:
+--------------
+* Ships now travel when not focused
 
 v0.1.1 changes:
 --------------
@@ -15,8 +19,8 @@ v0.1.1 changes:
 ------------
 Dependencies
 ------------
-* IMGUI-SFML 2.5
-* IMGUI 1.88
+* imgui-SFML 2.5
+* imgui 1.88
 
 ----------------
 Current Features

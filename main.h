@@ -7,7 +7,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
-class index
+class Index
 {
 public:
 	int selectedShip = 0;
@@ -108,7 +108,8 @@ public:
 	bool docked = true;
 	int target_distance = 0;
 
-	int distance_cal(int target_distance, bool docked)
+	void distance_cal(sf::Clock travel_delta);
+	/*int distance_cal(int target_distance, bool docked)
 	{
 		if (target_distance > 0 && !docked)
 		{
@@ -116,7 +117,7 @@ public:
 			std::cout << target_distance << std::endl;
 		}
 		return target_distance;
-	}
+	}*/
 
 	int status_check(int statusIndex, int target_distance)
 	{
@@ -140,12 +141,14 @@ public:
 		return docked;
 	}
 
-	int update(shipStats &active)
-	{
-		active.target_distance = distance_cal(active.target_distance, active.docked);
+	//void update();
 
-		return active.target_distance;
-	}
+	//int update(shipStats &active)
+	//{
+	//	active.target_distance = distance_cal(active.target_distance, active.docked);
+	//
+	//	return active.target_distance;
+	//}
 
 	shipStats(const char* n, const char* c, int i, int h, int f, int ca, int ct)
 	{
@@ -157,12 +160,16 @@ public:
 		cargo = ca;
 		cargo = ct;
 	}
-	//const char* status[2] = { stateDocked, stateInFlight };
-}/**agamemnon, *agrippa*/;
+	~shipStats();
+};
 
-class shipsClass
+
+
+class shipsClass : shipStats
 {
 public:
+
+
 	//shipStats agamemnon, agrippa;
 	//std::vector<shipStats> active = { agamemnon, agrippa };
 };
