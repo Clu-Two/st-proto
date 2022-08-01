@@ -9,7 +9,7 @@ Notes:
 
 v0.1.25 changes:
 --------------
-* First batch of changes to to build project in modules
+* First batch of changes to build project in modules
 
 
 v0.1.2 changes:
