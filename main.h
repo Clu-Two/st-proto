@@ -4,8 +4,34 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
+
+#include "imgui-SFML.h" // SFML ImGui includes
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "..\sqlite3\sqlite3.h"
+
+#include <stdio.h>
+#include <iostream>
+#include <set>
+#include <cstdio>
+#include <cmath>   
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <list>
+
+#include "windows.h"
+
+#include "destinations.h"
+#include "fleet.h"
+
+// All Preparations
+// Load all Assets
+// Load Database
+// Load Save Game
+
 
 class Index
 {
@@ -18,8 +44,7 @@ public:
 		row_total += increment;
 		return row_total;
 	}
-
-}indexO;
+};
 
 struct Assets
 {
@@ -40,30 +65,107 @@ struct Assets
 	//	std::cout << texture_files << std::endl;
 	//}
 };
-
-class stationStats
-{
-
-public:
-	static const int numberOf_stations = 3;
-	static const int links = 2;
-	int station_id = 0;
-	const char* name = { "N/A" };
-	int bays = 4;
-	int fuelPrice = 1;
-	const char* destinationBuffer = { "N/A" };
-	std::vector<std::pair<int, int>> adjacents[links];
-
-
-	stationStats(const char* n, int i, int fpr, int b)
-	{
-		name = n;
-		station_id = i;
-		fuelPrice = fpr;
-		bays = b;
-	}
-};
-
+//enum ShipDetails_char
+//{
+//	NAME,
+//	CLASS,
+//	LOCATION,
+//	DESTINATION
+//};
+//enum ShipDetails_int
+//{
+//	HEALTH,
+//	FUEL,
+//	SPEED,
+//	DISTANCE,
+//	CARGO
+//};
+//ImGuiWindowFlags fixed = /*ImGuiWindowFlags_NoTitleBar*/ ImGuiWindowFlags_NoCollapse /*| ImGuiWindowFlags_NoSavedSettings*/ /*| ImGuiWindowFlags_NoResize*/ | ImGuiWindowFlags_NoMove /*| ImGuiWindowFlags_MenuBar*/ | ImGuiWindowFlags_AlwaysAutoResize;
+//class GUI
+//{
+//public:
+//	enum ShipDetails_char
+//	{
+//		NAME,
+//		CLASS,
+//		LOCATION,
+//		DESTINATION
+//	};
+//	enum ShipDetails_int
+//	{
+//		HEALTH,
+//		FUEL,
+//		SPEED,
+//		DISTANCE,
+//		CARGO
+//	};
+//
+//	void details_panel(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image);
+//	int planner_panel(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image, int ship_index, int station_index, std::vector<stationStats> stations_vec, std::vector<shipStats> active, sf::Texture* station_image);
+//
+//	//void details_panel(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image)
+//	//{
+//	//	ImGui::SetNextWindowPos(ImVec2(0, 0), NULL);
+//	//	ImGui::SetNextWindowSize(ImVec2(450, 540), NULL);
+//	//	ImGui::Begin(shipDetails_char[NAME], NULL, fixed);
+//	//	ImGui::Text("Class: %s",shipDetails_char[CLASS]);
+//	//	ImGui::Text("Location: %s", shipDetails_char[LOCATION]);
+//	//	ImGui::Text("Health: %d", shipDetails_int[HEALTH]);
+//	//	ImGui::Text("Fuel: %d",shipDetails_int[FUEL]);
+//	//	ImGui::Text("Speed: %d",shipDetails_int[SPEED]);
+//	//	ImGui::Text("Cargo: %d",shipDetails_int[CARGO]);
+//	//	ImGui::Text("Destination: %s", shipDetails_char[DESTINATION]);
+//	//	ImGui::Text("Distance: %d",shipDetails_int[DISTANCE]);
+//	//	//ImGui::Text(state);
+//	//	ImGui::Image(*ship_image, ImVec2(350, 350));
+//	//	ImGui::End();
+//	//}
+//	//int planner_panel(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image, int ship_index, int station_index, std::vector<stationStats> stations_vec, std::vector<shipStats> active, sf::Texture* station_image)
+//	//{
+//	//	int flightPlan_x = 450; int flightPlan_y = 540; ImVec2 flightPlane_Size(flightPlan_x, flightPlan_y);
+//	//	ImGui::SetNextWindowPos(ImVec2(450, 0), NULL);
+//	//	ImGui::SetNextWindowSize(flightPlane_Size, NULL);
+//	//	ImGui::Begin("FLIGHT PLANNER", NULL, fixed);
+//	//	ImGui::Text("LOCATION: %s", shipDetails_char[LOCATION]);
+//	//	ImGui::Text("DESTINATION:", shipDetails_char[DESTINATION]);
+//	//	ImGui::Text("DISTANCE: %d", stations_vec.at(station_index).adjacents->at(0).second); //ImGui::SameLine();
+//
+//	//	if (ImGui::BeginCombo("##", stations_vec.at(indexO.selectedShip).destinationBuffer, NULL))
+//	//	{
+//	//		for (int selectable = 0; selectable < 3; selectable++)
+//	//		{
+//	//			if (ImGui::Selectable(stations_vec.at(selectable).name))
+//	//			{
+//	//				indexO.selectedStation = selectable;
+//	//				active.at(indexO.selectedShip).destination = stations_vec.at(selectable).name;
+//	//				stations_vec.at(indexO.selectedShip).destinationBuffer = stations_vec.at(selectable).name;
+//	//				active.at(indexO.selectedShip).target_distance += stations_vec.at(indexO.selectedStation).adjacents->at(0).second;
+//
+//	//			}
+//	//		}
+//	//		ImGui::EndCombo();
+//	//	}
+//	//	//ImGui::SameLine();
+//
+//	//	// Center LAUNCH Button
+//	//	// Get Window Size, Set LAUNCH Button Size, Calculate Diffferent divide by 2
+//
+//	//	int window_x = ImGui::GetCurrentWindow()->Size.x;
+//	//	ImVec2 launch_ButtonSize(60, 20);
+//	//	ImGui::Spacing(); ImGui::SameLine((window_x - launch_ButtonSize.x) / 2);
+//	//	if (ImGui::Button("LAUNCH", launch_ButtonSize))
+//	//	{
+//	//		printf("LAUNCHED %s \n", active.at(indexO.selectedShip).name);
+//	//		active.at(indexO.selectedShip).docked = false;
+//	//		active.at(indexO.selectedShip).statusIndex = 1;
+//	//	}
+//	//	ImGui::Spacing(); ImGui::SameLine((window_x - 400) / 2); // 300 Image x
+//	//	ImGui::Image(*station_image, ImVec2(400, 400));
+//	//	ImGui::End();
+//	//	return active.at(indexO.selectedShip).target_distance;
+//	//}
+//
+//};
 
 //struct Station 
 //{
@@ -79,102 +181,6 @@ public:
 //	std::set<stationStats> adjacents;
 //};
 
-
-
-
-
-
-class shipStats
-{
-public:
-	const char* name = { "N/A" };
-	const char* newShip[100] = { "N/A" };
-	const char* shipClass = { "N/A" };
-	int health = 100;
-	int fuel = 1000;
-	int speed = 0;
-	int cargo = 0;
-	int cargoStage = 0;
-	int cargoCap = 10;
-	int index = 0;
-	const char* stateDocked = { "Docked" };
-	const char* stateInFlight = { "In Flight" };
-	int statusIndex = 0;
-	int bay = 0;
-	const char* bayChar = "N/A";
-	const char* status[2] = { "Docked", "In Flight" };
-	const char* location = {"Earth"};
-	const char* destination = { "N/A" };
-	bool docked = true;
-	int target_distance = 0;
-
-	void distance_cal(sf::Clock travel_delta);
-	/*int distance_cal(int target_distance, bool docked)
-	{
-		if (target_distance > 0 && !docked)
-		{
-			target_distance -= 0.5f;
-			std::cout << target_distance << std::endl;
-		}
-		return target_distance;
-	}*/
-
-	int status_check(int statusIndex, int target_distance)
-	{
-		if (target_distance <= 0)
-		{
-			statusIndex = 0;
-		}
-		return statusIndex;
-	}
-
-	bool is_docked(bool docked, int statusIndex)
-	{
-		if (statusIndex == 0)
-		{
-			docked = true;
-		}
-		if (statusIndex == 1)
-		{
-			docked = false;
-		}
-		return docked;
-	}
-
-	//void update();
-
-	//int update(shipStats &active)
-	//{
-	//	active.target_distance = distance_cal(active.target_distance, active.docked);
-	//
-	//	return active.target_distance;
-	//}
-
-	shipStats(const char* n, const char* c, int i, int h, int f, int ca, int ct)
-	{
-		name = n;
-		shipClass = c;
-		index = i;
-		health = h;
-		fuel = f;
-		cargo = ca;
-		cargo = ct;
-	}
-	~shipStats();
-};
-
-
-
-class shipsClass : shipStats
-{
-public:
-
-
-	//shipStats agamemnon, agrippa;
-	//std::vector<shipStats> active = { agamemnon, agrippa };
-};
-
-
 //class star_graph
 //{
 //public:
@@ -187,28 +193,6 @@ public:
 //	int n;
 //
 //};
-
-struct market
-{
-	const char* name = { "N/A" };
-		const char* id = { "N/A" };
-		int weight = 0;
-		int price = 0;
-		int quantity = 0;
-		int row_total = 0;
-		int load_total = 0;
-
-		market(const char* n, const char* i, int w, int p, int q)
-		{
-			name = n;
-			id = i;
-			weight = w;
-			price = p;
-			quantity = q;
-		}
-
-};
-
 
 // Weighted Directed Graph
 //struct Edge

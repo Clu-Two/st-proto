@@ -1,20 +1,25 @@
-Star Trader v0.1.2
+Star Trader v0.1.25
 ============================
 A space ship ui based trading management sim.
 
 ------
 Notes:
 ------
-* Market needs to be fixed
+* compiles and runs but entirely broken
+
+v0.1.25 changes:
+--------------
+* First batch of changes to to build project in modules
+
 
 v0.1.2 changes:
 --------------
-* Ships now travel when not focused
+* Ships now travel when not focused.
 
 v0.1.1 changes:
 --------------
 * removed multiple pets
-* cleaned and refactored a lot to suit the new gui 
+* cleaned and refactored a lot to suit the new gui .
 
 ------------
 Dependencies
