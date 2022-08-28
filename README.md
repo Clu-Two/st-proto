@@ -1,15 +1,11 @@
-Star Trader v0.1.26
+Star Trader v0.1.25
 ============================
 A space ship ui based trading management sim.
 
 ------
 Notes:
 ------
-* progress towards functioning database, not compiling
-
-v0.1.26 changes:
---------------
-* First additions of the database
+* compiles and runs but entirely broken
 
 v0.1.25 changes:
 --------------
