@@ -3,25 +3,25 @@
 
 ImGuiWindowFlags fixed = /*ImGuiWindowFlags_NoTitleBar*/ ImGuiWindowFlags_NoCollapse /*| ImGuiWindowFlags_NoSavedSettings*/ /*| ImGuiWindowFlags_NoResize*/ | ImGuiWindowFlags_NoMove /*| ImGuiWindowFlags_MenuBar*/ | ImGuiWindowFlags_AlwaysAutoResize;
 
-void GUI::SHIP_DETAILS(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image)
+void GUI::SHIP_DETAILS(std::vector<shipStats>& active, /*const char* state[2],*/ sf::Texture* ship_image, int selectedShip, std::pair<std::string, int> course)
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 0), NULL);
 	ImGui::SetNextWindowSize(ImVec2(450, 540), NULL);
-	ImGui::Begin(shipDetails_char[NAME], NULL, fixed);
-	ImGui::Text("Class: %s", shipDetails_char[CLASS]);
-	ImGui::Text("Location: %s", shipDetails_char[LOCATION]);
-	ImGui::Text("Health: %d", shipDetails_int[HEALTH]);
-	ImGui::Text("Fuel: %d", shipDetails_int[FUEL]);
-	ImGui::Text("Speed: %d", shipDetails_int[SPEED]);
-	ImGui::Text("Cargo: %d", shipDetails_int[CARGO]);
-	ImGui::Text("Destination: %s", shipDetails_char[DESTINATION]);
-	ImGui::Text("Distance: %d", shipDetails_int[DISTANCE]);
+	ImGui::Begin(active.at(selectedShip).name, NULL, fixed);
+	ImGui::Text("Class: %s", active.at(selectedShip).shipClass);
+	ImGui::Text("Location: %s", active.at(selectedShip).location);
+	ImGui::Text("Health: %d", active.at(selectedShip).health);
+	ImGui::Text("Fuel: %d", active.at(selectedShip).fuel);
+	ImGui::Text("Speed: %d", active.at(selectedShip).speed);
+	ImGui::Text("Cargo: %d", active.at(selectedShip).cargo);
+	ImGui::Text("Destination: %s", course.first.c_str());
+	ImGui::Text("Distance: %d", active.at(selectedShip).target_distance);
 	//ImGui::Text(state);
 	ImGui::Image(*ship_image, ImVec2(350, 350));
 	ImGui::End();
 }
 
-int GUI::COURSE(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image, int ship_index, int station_index, std::vector<stationStats> stations_vec, std::vector<shipStats> active, sf::Texture* station_image)
+std::pair<std::string, int> GUI::ROUTE(const char* shipDetails_char[4], int shipDetails_int[5], /*const char* state[2],*/ sf::Texture* ship_image, int ship_index, int station_index, std::vector<stationStats> stations_vec, std::vector<shipStats> active, sf::Texture* station_image, const char* destinationBuffer)
 {
 	int flightPlan_x = 450; int flightPlan_y = 540; ImVec2 flightPlane_Size(flightPlan_x, flightPlan_y);
 	ImGui::SetNextWindowPos(ImVec2(450, 0), NULL);
@@ -30,8 +30,7 @@ int GUI::COURSE(const char* shipDetails_char[4], int shipDetails_int[5], /*const
 	ImGui::Text("LOCATION: %s", shipDetails_char[LOCATION]);
 	ImGui::Text("DESTINATION:", shipDetails_char[DESTINATION]);
 	ImGui::Text("DISTANCE: %d", stations_vec.at(station_index).adjacents->at(0).second); //ImGui::SameLine();
-
-	if (ImGui::BeginCombo("##", stations_vec.at(ship_index).destinationBuffer, NULL))
+	if (ImGui::BeginCombo("##", destinationBuffer, NULL))
 	{
 		for (int selectable = 0; selectable < 3; selectable++)
 		{
@@ -39,9 +38,10 @@ int GUI::COURSE(const char* shipDetails_char[4], int shipDetails_int[5], /*const
 			{
 				station_index = selectable;
 				active.at(ship_index).destination = stations_vec.at(selectable).name;
-				stations_vec.at(ship_index).destinationBuffer = stations_vec.at(selectable).name;
+                destinationBuffer = stations_vec.at(selectable).name;
+                std::cout << destinationBuffer << std::endl;
 				active.at(ship_index).target_distance += stations_vec.at(station_index).adjacents->at(0).second;
-
+                break;
 			}
 		}
 		ImGui::EndCombo();
@@ -63,7 +63,7 @@ int GUI::COURSE(const char* shipDetails_char[4], int shipDetails_int[5], /*const
 	ImGui::Spacing(); ImGui::SameLine((window_x - 400) / 2); // 300 Image x
 	ImGui::Image(*station_image, ImVec2(400, 400));
 	ImGui::End();
-	return active.at(ship_index).target_distance;
+    return std::make_pair(destinationBuffer,station_index);
 }
 
 void GUI::MARKET(market* market, std::vector<shipStats> &active, int ship_index)
@@ -154,7 +154,7 @@ void GUI::MARKET(market* market, std::vector<shipStats> &active, int ship_index)
     ImGui::End();
 }
 
-void GUI::FLEET(std::vector<shipStats> &active, int ship_index)
+int GUI::FLEET(std::vector<shipStats> &active, int ship_index)
 {
     // ACTIVE FLEET TABLE
     ImGui::SetNextWindowPos(ImVec2(0, 540), NULL);
@@ -216,4 +216,5 @@ void GUI::FLEET(std::vector<shipStats> &active, int ship_index)
         ImGui::EndTable();
     }
     ImGui::End();
+    return ship_index;
 }

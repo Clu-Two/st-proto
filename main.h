@@ -9,7 +9,7 @@
 #include "imgui-SFML.h" // SFML ImGui includes
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "..\sqlite3\sqlite3.h"
+
 
 #include <stdio.h>
 #include <iostream>
@@ -21,9 +21,10 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <utility>
+
 
 #include "windows.h"
-
 #include "destinations.h"
 #include "fleet.h"
 
@@ -38,6 +39,10 @@ class Index
 public:
 	int selectedShip = 0;
 	int selectedStation = 0;
+	const char* destinationBuffer = { "N/A" };
+	std::string buffer = destinationBuffer;
+	std::pair<std::string, int> courseP;
+
 	int increment = 0;
 	int marketRowStaging(int row_total, int increment)
 	{

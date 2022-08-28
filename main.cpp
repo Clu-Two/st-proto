@@ -1,12 +1,5 @@
 
 
-//#include "imgui-SFML.h" // SFML ImGui includes
-//#include "imgui.h"
-//#include "imgui_internal.h"
-//#include "..\sqlite3\sqlite3.h"
-//
-//#include "windows.h"
-
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
@@ -14,17 +7,6 @@
 #define IM_CLAMP(V, MN, MX)     ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
 #define IM_ARRAYSIZE(_ARR)          ((int)(sizeof(_ARR) / sizeof(*(_ARR))))     // Size of a static C-style array. Don't use on pointers!
 #define IMGUI_CDECL __cdecl
-
-//#include <stdio.h>
-//#include <iostream>
-//#include <set>
-//#include <cstdio>
-//#include <cmath>   
-//#include <iostream>
-//#include <sstream>
-//#include <string>
-//#include <vector>
-//#include <list>
 
 #include "main.h"
 //#include "destinations.h"
@@ -49,8 +31,6 @@ void File_MenuDrop()
 
 int row_current = NULL;
 //shipStats* agamemnon = new shipStats(), * agrippa = new shipStats();
-
-
 
 int main(int argc, char** argv)
 {
@@ -115,6 +95,7 @@ int main(int argc, char** argv)
     //shipStats SHIPSTATS;
     GUI gui;
     Index indexO;
+
 //SET SHIP VARIABLES
 //shipStats* agamemnon = new shipStats{ "North - Star", "Agamemnon", 1, 100, 400, 0, 0 };
 shipStats agamemnon("North - Star", "Agamemnon", 1, 100, 400, 0, 0);
@@ -132,7 +113,7 @@ active.push_back(agrippa);
 stationStats io( "Io", 0, 2, 2);
 stationStats phobos("Phobos", 1, 2, 1);
 stationStats titan("Titan", 2, 4, 4);
-
+//const char* STATIONS[3] = {"Io, Phobos, Titan"};
 
 
 
@@ -150,7 +131,7 @@ titan.adjacents[0].push_back(std::make_pair(io.station_id, 50));
 
 
 std::vector<stationStats> STATIONS = { phobos, io, titan };
-std::vector<const char*> stationNames = { phobos.name, io.name, titan.name };
+std::vector<const char*> stationNames = {"N/A", phobos.name, io.name, titan.name};
 std::vector<int> stationID = { phobos.station_id, io.station_id, titan.station_id };
 
 //Station StationO;
@@ -207,15 +188,19 @@ while (window.isOpen())
     //// GUI WINDOWS
     {
         // SHIP DETAIL
-        gui.SHIP_DETAILS(active.at(indexO.selectedShip).shipDetails_char, active.at(indexO.selectedShip).shipDetails_int, &assets.pshipDisplay[indexO.selectedShip]);
+        gui.SHIP_DETAILS(active, &assets.pshipDisplay[indexO.selectedShip], indexO.selectedShip, indexO.courseP.first, active.at(indexO.selectedShip).target_distance);
         // FLIGHT PLANNER
-        active.at(indexO.selectedShip).target_distance = gui.COURSE(active.at(indexO.selectedShip).shipDetails_char, active.at(indexO.selectedShip).shipDetails_int, &assets.pshipDisplay[indexO.selectedShip], indexO.selectedShip, indexO.selectedStation, STATIONS, active, &assets.pstationDisplay[indexO.selectedStation]);
+        indexO.courseP = gui.ROUTE(active.at(indexO.selectedShip).shipDetails_char, active.at(indexO.selectedShip).shipDetails_int, &assets.pshipDisplay[indexO.selectedShip], indexO.selectedShip, indexO.selectedStation, STATIONS, active, &assets.pstationDisplay[indexO.selectedStation], indexO.destinationBuffer);
+            //indexO.destinationBuffer = indexO.courseP.first.c_str();
+            indexO.selectedStation = indexO.courseP.second;
+            stationNames[indexO.courseP.second];
+            indexO.destinationBuffer = gui.station_index_match(indexO.courseP.second);
+            active.at(indexO.selectedShip).target_distance = STATIONS.at(indexO.courseP.second).adjacents.at(second);
         // MARKET
-
-            gui.MARKET(market_data, active, indexO.selectedShip);
-
+        gui.MARKET(market_data, active, indexO.selectedShip);
         // FLEET
-        gui.FLEET(active, indexO.selectedShip);
+        indexO.selectedShip = gui.FLEET(active, indexO.selectedShip);
+
 
         //int flightPlan_x = 450;
         //int flightPlan_y = 540;
